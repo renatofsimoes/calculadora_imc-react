@@ -8,7 +8,28 @@ function App() {
   const calcImc = (e, height, weight) => {
     e.preventDefault();
     if (!weight || !height) return;
-    console.log(height, weight);
+
+    const weightFloat = +weight.replace(",", ".");
+    const heightFloat = +height.replace(",", ".");
+
+    const imcResult = (weightFloat / (heightFloat * heightFloat)).toFixed(1);
+
+    setImc(imcResult);
+
+    data.forEach((item) => {
+      if (imcResult >= item.min && imcResult <= item.max) {
+        setInfo(item.info);
+        setInfoClass(item.infoClass);
+      }
+    });
+    if (!info) return;
+  };
+
+  const resetCalc = (e) => {
+    e.preventDefault();
+    setImc("");
+    setInfo("");
+    setInfoClass("");
   };
 
   const [imc, setImc] = useState("");
@@ -17,7 +38,17 @@ function App() {
 
   return (
     <div className="container">
-      {!imc ? <ImcCalc calcImc={calcImc} /> : <ImcTable />}
+      {!imc ? (
+        <ImcCalc calcImc={calcImc} />
+      ) : (
+        <ImcTable
+          data={data}
+          imc={imc}
+          info={info}
+          infoClass={infoClass}
+          resetCalc={resetCalc}
+        />
+      )}
     </div>
   ); //Caso não haja imc, retorna o formulário de cálculo de imc, caso haja imc retorna a tabela do imc
 }
